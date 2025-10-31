@@ -14,10 +14,20 @@
   }
 {%- endstyle -%}
 
+{%- liquid
+  assign frontend_url = section.settings.mod_frontend_url | default: 'https://staging-shopify.modhealth.ai'
+
+  # Build MOD logout URL that redirects back to Shopify logout
+  assign shop_domain = shop.permanent_domain | default: shop.domain
+  assign shopify_logout_url = 'https://' | append: shop_domain | append: routes.account_logout_url
+  assign encoded_shopify_logout = shopify_logout_url | url_encode
+  assign mod_logout_url = frontend_url | append: '/auth/multipass/logout?shopify_logout_url=' | append: encoded_shopify_logout
+-%}
+
 <div class="customer account section-{{ section.id }}-padding">
   <div>
     <h1 class="customer__title">{{ 'customer.account.title' | t }}</h1>
-    <a href="{{ routes.account_logout_url }}" onclick="handleLogout(event)">
+    <a href="{{ mod_logout_url }}">
       <span class="svg-wrapper">
         {{- 'icon-account.svg' | inline_asset_content -}}
       </span>
@@ -188,31 +198,3 @@
   ]
 }
 {% endschema %}
-
-<script>
-  /**
-   * Handle Shopify logout with MOD sync
-   * When user logs out from Shopify, redirect them to MOD to logout there too
-   */
-  function handleLogout(event) {
-    event.preventDefault()
-
-    // Get the frontend URL from section settings
-    const frontendUrl = '{{ section.settings.mod_frontend_url | default: "https://staging-shopify.modhealth.ai" }}'
-
-    // Create a form to POST to logout URL
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = '{{ routes.account_logout_url }}'
-
-    // Add redirect parameter
-    const input = document.createElement('input')
-    input.type = 'hidden'
-    input.name = 'return_to'
-    input.value = frontendUrl + '/auth/logout'
-    form.appendChild(input)
-
-    document.body.appendChild(form)
-    form.submit()
-  }
-</script>
