@@ -17,7 +17,7 @@
 <div class="customer account section-{{ section.id }}-padding">
   <div>
     <h1 class="customer__title">{{ 'customer.account.title' | t }}</h1>
-    <a href="{{ routes.account_logout_url }}">
+    <a href="{{ routes.account_logout_url }}" onclick="handleLogout(event)">
       <span class="svg-wrapper">
         {{- 'icon-account.svg' | inline_asset_content -}}
       </span>
@@ -155,6 +155,13 @@
   "name": "t:sections.main-account.name",
   "settings": [
     {
+      "type": "text",
+      "id": "mod_frontend_url",
+      "label": "MOD Frontend URL",
+      "default": "https://staging-shopify.modhealth.ai",
+      "info": "The base URL of the MOD frontend application for logout sync"
+    },
+    {
       "type": "header",
       "content": "t:sections.all.padding.section_padding_heading"
     },
@@ -181,3 +188,31 @@
   ]
 }
 {% endschema %}
+
+<script>
+  /**
+   * Handle Shopify logout with MOD sync
+   * When user logs out from Shopify, redirect them to MOD to logout there too
+   */
+  function handleLogout(event) {
+    event.preventDefault()
+
+    // Get the frontend URL from section settings
+    const frontendUrl = '{{ section.settings.mod_frontend_url | default: "https://staging-shopify.modhealth.ai" }}'
+
+    // Create a form to POST to logout URL
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = '{{ routes.account_logout_url }}'
+
+    // Add redirect parameter
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = 'return_to'
+    input.value = frontendUrl + '/auth/logout'
+    form.appendChild(input)
+
+    document.body.appendChild(form)
+    form.submit()
+  }
+</script>
