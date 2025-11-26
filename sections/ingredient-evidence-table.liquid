@@ -1,0 +1,89 @@
+{%- comment -%}
+  Ingredient snapshot & evidence table
+{%- endcomment -%}
+
+{%- assign rows = product.metafields.custom.ingredient_evidence_rows.value -%}
+
+{%- if rows != blank -%}
+  <div class="ingr-evidence page-width">
+    <h3 class="ingr-evidence__title">Ingredient snapshot &amp; evidence</h3>
+
+    <table class="ingr-evidence__table">
+      <thead>
+        <tr>
+          <th>Nutrient (daily dose)</th>
+          <th>Key role</th>
+          <th>Main human studies</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in rows -%}
+          {%- assign keyrole_field = row.key_role | default: row.keyrole | default: row.key_role_6_words -%}
+          <tr>
+            <td class="ingr-evidence__col1">{{ row.nutrient | metafield_tag }}</td>
+            <td class="ingr-evidence__col2">{{ keyrole_field | metafield_tag }}</td>
+            <td class="ingr-evidence__col3">{{ row.studies | metafield_tag }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+{%- endif -%}
+
+{% style %}
+/* Section spacing */
+.ingr-evidence {
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
+}
+.ingr-evidence__title {
+  margin: 0 0 .75rem 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Table base */
+.ingr-evidence__table { width:100%; border-collapse:collapse; }
+.ingr-evidence__table th, .ingr-evidence__table td {
+  border:1px solid rgba(0,0,0,.08);
+  padding:.75rem;
+  vertical-align:top;
+}
+.ingr-evidence__table th { text-align:left; font-weight:600; }
+
+/* Unified column widths — same as Usage & Dosage */
+.ingr-evidence__col1 { width:25%; }
+.ingr-evidence__col2 { width:30%; }
+.ingr-evidence__col3 { width:45%; }
+
+.ingr-evidence__col3 a { text-decoration: underline; }
+
+/* Horizon alignment */
+.page-width {
+  max-width: var(--page-width, 1200px);
+  margin: 0 auto;
+  padding-left: var(--page-padding, 2rem);
+  padding-right: var(--page-padding, 2rem);
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+  .ingr-evidence__table, .ingr-evidence__table thead { display:block; }
+  .ingr-evidence__table thead { position:absolute; left:-9999px; }
+  .ingr-evidence__table tr {
+    display:block;
+    border:1px solid rgba(0,0,0,.08);
+    margin-bottom:.75rem;
+  }
+  .ingr-evidence__table td { display:block; width:100%; }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Ingredient evidence table",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "Ingredient evidence table" }]
+}
+{% endschema %}
