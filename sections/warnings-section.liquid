@@ -1,0 +1,86 @@
+{%- comment -%}
+  Warnings section (single rich-text field per bullet)
+  Product metafields:
+  - product.metafields.custom.warnings_major   (list of warning_item)
+  - product.metafields.custom.warnings_further (list of warning_item)
+{%- endcomment -%}
+
+{%- assign major = product.metafields.custom.warnings_major.value -%}
+{%- assign further = product.metafields.custom.warnings_further.value -%}
+
+{%- if major != blank or further != blank -%}
+  <div class="warnings page-width">
+    <h3 class="warnings__title">Warnings</h3>
+
+    {%- if major != blank -%}
+      {%- assign major_sorted = major | sort: 'order' -%}
+      <h4 class="warnings__subtitle">Warnings (Major Risks &amp; Contraindications)</h4>
+      <ul class="warnings__list">
+        {%- for item in major_sorted -%}
+          {%- if item.content != blank -%}
+            <li class="warnings__item">{{ item.content | metafield_tag }}</li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if further != blank -%}
+      {%- assign further_sorted = further | sort: 'order' -%}
+      <h4 class="warnings__subtitle">Further Warnings (Precautions &amp; Side Effects)</h4>
+      <ul class="warnings__list">
+        {%- for item in further_sorted -%}
+          {%- if item.content != blank -%}
+            <li class="warnings__item">{{ item.content | metafield_tag }}</li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% style %}
+/* Horizon container alignment */
+.page-width {
+  max-width: var(--page-width, 1200px);
+  margin: 0 auto;
+  padding-left: var(--page-padding, 2rem);
+  padding-right: var(--page-padding, 2rem);
+}
+
+/* Spacing */
+.warnings { margin-top: 1.5rem; margin-bottom: 3rem; }
+
+/* Main title (bigger) */
+.warnings__title {
+  margin: 0 0 .75rem 0;
+  font-weight: 700;
+  font-size: 1.5rem;       /* main, larger */
+  line-height: 1.25;
+}
+
+/* Subtitles (smaller) */
+.warnings__subtitle {
+  margin: 1rem 0 .25rem 0;
+  font-weight: 600;
+  font-size: 1.125rem;     /* ~18px, smaller than main */
+  line-height: 1.3;
+}
+
+/* Lists */
+.warnings__list { margin: .25rem 0 0 1.2rem; padding: 0; }
+.warnings__item { margin: .5rem 0; }
+.warnings__item a { text-decoration: underline; }
+
+/* Tidy rich-text paragraphs inside list items */
+.warnings__item > p:first-child { margin-top: 0; }
+.warnings__item > p:last-child  { margin-bottom: 0; }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Warnings",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "Warnings" }]
+}
+{% endschema %}
