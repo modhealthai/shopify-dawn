@@ -1,0 +1,112 @@
+{%- comment -%}
+  Usage & Dosage table + optional adnotation (with anti-collapsing spacing)
+{%- endcomment -%}
+
+{%- assign rows = product.metafields.custom.usage_dosage_table_rows.value -%}
+{%- assign note = product.metafields.custom.usage_dosage_adnotation.value -%}
+
+{%- assign has_note = false -%}
+{%- if note != blank -%}
+  {%- assign has_note = true -%}
+{%- endif -%}
+
+{%- if rows != blank -%}
+  <div class="usage-dosage page-width{% if has_note %} usage-dosage--has-note{% else %} usage-dosage--no-note{% endif %}">
+    <h3 class="usage-dosage__title">Usage &amp; Dosage</h3>
+
+    <table class="usage-dosage__table">
+      <thead>
+        <tr>
+          <th>Pills/Timing</th>
+          <th>Ingredients</th>
+          <th>Advice</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in rows -%}
+          {%- assign timing_field = row.timing | default: row.pills_timing -%}
+          <tr>
+            <td class="usage-dosage__col1">{{ timing_field | metafield_tag }}</td>
+            <td class="usage-dosage__col2">{{ row.ingredients | metafield_tag }}</td>
+            <td class="usage-dosage__col3">{{ row.advice | metafield_tag }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    {%- if has_note -%}
+      <p class="usage-dosage__note">
+        {{ product.metafields.custom.usage_dosage_adnotation | metafield_tag }}
+      </p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% style %}
+/* Base: prevent collapsing with next sections */
+.usage-dosage { margin: 0; }
+
+/* If there is NO note, just add standard bottom margin after the table */
+.usage-dosage--no-note { margin-bottom: 3rem; }
+
+/* If there IS a note, keep the note tight to table but push space using PADDING on wrapper */
+.usage-dosage--has-note { padding-bottom: 3rem; } /* <-- visible gap before next section */
+
+/* Heading */
+.usage-dosage__title {
+  margin-bottom: .75rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Table */
+.usage-dosage__table { width:100%; border-collapse:collapse; }
+.usage-dosage__table th, .usage-dosage__table td {
+  border:1px solid rgba(0,0,0,.08);
+  padding:.75rem;
+  vertical-align:top;
+}
+.usage-dosage__table th { text-align:left; font-weight:600; }
+
+/* Unified column widths */
+.usage-dosage__col1 { width:25%; }
+.usage-dosage__col2 { width:30%; }
+.usage-dosage__col3 { width:45%; }
+
+/* Note: sit close to table; no bottom margin (padding on wrapper creates the gap) */
+.usage-dosage__note {
+  margin-top: .25rem;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(0,0,0,0.75);
+}
+
+/* Horizon alignment */
+.page-width {
+  max-width: var(--page-width, 1200px);
+  margin: 0 auto;
+  padding-left: var(--page-padding, 2rem);
+  padding-right: var(--page-padding, 2rem);
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+  .usage-dosage__table, .usage-dosage__table thead { display:block; }
+  .usage-dosage__table thead { position:absolute; left:-9999px; }
+  .usage-dosage__table tr {
+    display:block;
+    border:1px solid rgba(0,0,0,.08);
+    margin-bottom:.75rem;
+  }
+  .usage-dosage__table td { display:block; width:100%; }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Usage & Dosage table",
+  "settings": [],
+  "presets": [{ "name": "Usage & Dosage table" }]
+}
+{% endschema %}
