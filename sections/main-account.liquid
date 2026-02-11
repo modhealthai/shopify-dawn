@@ -15,7 +15,7 @@
 {%- endstyle -%}
 
 {%- liquid
-  assign frontend_url = section.settings.mod_frontend_url | default: 'https://staging-shopify.modhealth.ai'
+  assign frontend_url = section.settings.mod_frontend_url | default: 'https://staging-shopify.modsealth.com'
 
   # Build MOD logout URL that redirects back to Shopify logout
   assign shop_domain = shop.permanent_domain | default: shop.domain
@@ -168,7 +168,7 @@
       "type": "text",
       "id": "mod_frontend_url",
       "label": "MOD Frontend URL",
-      "default": "https://staging-shopify.modhealth.ai",
+      "default": "https://staging-shopify.moshealth.com",
       "info": "The base URL of the MOD frontend application for logout sync"
     },
     {
